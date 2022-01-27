@@ -1,36 +1,111 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>イントロクイズ</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
-</head>
-<body>
+    <script>
+      eruda.init()
+    </script>
+  </head>
+  <body>
+    <h2 class="title" style="text-align:center">
+      <span style="color: cornflowerblue">イントロ</span>クイズ
+    </h2>
 
-    <h2 class="title"><span style="color: cornflowerblue;">イントロ</span>クイズ</>
-    <button class="uk-button uk-button-primary uk-button-large" id="start" onclick="GameStart()">START</button>
+    <div>
+      <button
+        class="uk-button uk-button-primary uk-button-large uk-width-1-1"
+        id="start"
+        onclick="GameStart()"
+      >
+        START
+      </button>
+      <button
+        class="uk-button uk-button-secondary uk-button-large uk-width-1-1"
+        uk-toggle="target: #Setting"
+      >
+        設定
+      </button>
+    </div>
+
+    <div id="Setting" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body">
+        <h2 class="uk-modal-title">設定</h2>
+        <div class="uk-margin">
+          <textarea
+            class="uk-textarea"
+            id="YtUrls"
+            rows="5"
+            placeholder="Youtubeのリンクを貼ってください。複数も可"
+          ></textarea>
+        </div>
+        <button
+          class="uk-button uk-button-default uk-modal-close"
+          type="button"
+        >
+          閉じる
+        </button>
+        <button
+          class="uk-button uk-button-primary"
+          type="button"
+          onclick="SaveSetting()"
+        >
+          保存する
+        </button>
+      </div>
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script>
-        function LoadYtUrls() {
-            return
-        }
-        function ShowQuiz(q_number) {
-            document.title = '○問目 | イントロクイズ'
-            return
-        }
-        function ShowAnswer(q_number) {
+    <script src="https://www.youtube.com/iframe_api" async></script>
 
-        }
-        function GameStart() {
-            $("body").html()
-        }
+    <script>
+      function LoadSetting() {
+        return { YtUrls: window.YtUrls }
+      }
+      function ShowQuiz(q_number) {
+        const setting = LoadSetting()
+        const YtUrl = setting.YtUrls.split('\n')[q_number - 1]
+        const YtId = YtUrl.split('/')[3]
+        window.q_number = q_number
+        document.title = `${q_number}問目 | イントロクイズ`
+        player = new YT.Player("player", {
+          videoId: YtId, //Youtube動画のID
+          events: {
+            "onReady": function (event) {player.setVolume(60)},
+          },
+          playerVars:{
+            autoplay:1 //自動再生
+          }
+        });
+        $('#player, #next').hide()
+        $('#ShowAnswer').show()
+      }
+      function ShowAnswer(q_number) {
+        $('#ShowAnswer').hide()
+        $('#player, #next').show()
+      }
+      function GameStart() {
+        $('body').html(`
+        <div id="player"></div>
+
+        <button class="uk-button uk-button-primary" id="ShowAnswer" onclick="ShowAnswer(window.q_number)">答え合わせ</button>
+        <button class="uk-button uk-button-primary" id="next" onclick="ShowQuiz(window.q_number + 1)">NEXT</button>
+        `)
+        ShowQuiz(1)
+      }
+      function SaveSetting() {
+        const YtUrls = $('#YtUrls').val()
+        window.YtUrls = YtUrls
+      }
     </script>
-</body>
+  </body>
 </html>
