@@ -45,9 +45,16 @@
             class="uk-textarea"
             id="YtUrls"
             rows="5"
-            placeholder="Youtubeのリンクを貼ってください。複数も可"
+            placeholder="Youtubeのリンクを貼ってください。複数ある場合は改行してください。現在、短縮URLのみ https://youtu.be/○○○○○"
           ></textarea>
         </div>
+        <!--
+        <label
+          ><input
+            class="uk-checkbox"
+            id="isRandom"
+            type="checkbox"
+          />ランダムに再生するか</label>-->
         <button
           class="uk-button uk-button-default uk-modal-close"
           type="button"
@@ -68,31 +75,51 @@
     <script src="https://www.youtube.com/iframe_api" async></script>
 
     <script>
+      function SaveSetting() {
+        const YtUrls = $('#YtUrls').val()
+        window.YtUrls = YtUrls
+      }
       function LoadSetting() {
         return { YtUrls: window.YtUrls }
       }
       function ShowQuiz(q_number) {
         const setting = LoadSetting()
+        console.log(setting.YtUrls.split('\n').length, q_number)
+        if (setting.YtUrls.split('\n').length < q_number) {
+          GameEnd()
+          return
+        }
         const YtUrl = setting.YtUrls.split('\n')[q_number - 1]
         const YtId = YtUrl.split('/')[3]
         window.q_number = q_number
         document.title = `${q_number}問目 | イントロクイズ`
         $('#player').remove()
         $('body').prepend('<div id="player"></div>')
-        player = new YT.Player("player", {
+        player = new YT.Player('player', {
           videoId: YtId,
           events: {
-            "onReady": function (event) {
+            onReady: function (event) {
               player.setVolume(60)
               player.playVideo()
             },
           },
-          playerVars:{
-            autoplay:1
-          }
-        });
+          playerVars: {
+            autoplay: 1,
+            loop: 1,
+            playlist: YtId,
+          },
+        })
         $('#player, #next').hide()
         $('#ShowAnswer').show()
+
+        $('#start').click(function (e) {
+          e.preventDefault()
+          player.playVideo()
+        })
+        $('#stop').click(function (e) {
+          e.preventDefault()
+          player.stopVideo()
+        })
       }
       function ShowAnswer(q_number) {
         $('#ShowAnswer').hide()
@@ -102,14 +129,18 @@
         $('body').html(`
         <div id="player"></div>
 
-        <button class="uk-button uk-button-primary" id="ShowAnswer" onclick="ShowAnswer(window.q_number)">答え合わせ</button>
+        <div id="operation">
+        <button class="uk-button uk-button-secondary" id="play">再生</button>
+        <button class="uk-button uk-button-secondary" id="stop">停止</button>
+        </div>
+
+        <button class="uk-button uk-button-danger" id="ShowAnswer" onclick="ShowAnswer(window.q_number)">答え</button>
         <button class="uk-button uk-button-primary" id="next" onclick="ShowQuiz(window.q_number + 1)">NEXT</button>
         `)
         ShowQuiz(1)
       }
-      function SaveSetting() {
-        const YtUrls = $('#YtUrls').val()
-        window.YtUrls = YtUrls
+      function GameEnd() {
+        $('body').html("終了")
       }
     </script>
   </body>
