@@ -77,13 +77,18 @@
         const YtId = YtUrl.split('/')[3]
         window.q_number = q_number
         document.title = `${q_number}問目 | イントロクイズ`
+        $('#player').remove()
+        $('body').prepend('<div id="player"></div>')
         player = new YT.Player("player", {
-          videoId: YtId, //Youtube動画のID
+          videoId: YtId,
           events: {
-            "onReady": function (event) {player.setVolume(60)},
+            "onReady": function (event) {
+              player.setVolume(60)
+              player.playVideo()
+            },
           },
           playerVars:{
-            autoplay:1 //自動再生
+            autoplay:1
           }
         });
         $('#player, #next').hide()
