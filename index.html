@@ -1,132 +1,133 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>イントロクイズ</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/eruda"></script>
-    <script>
-      eruda.init()
-    </script>
-  </head>
-  <body>
-    <h2 class="title" style="text-align:center">
-      <span style="color: cornflowerblue">イントロ</span>クイズ
-    </h2>
 
-    <div>
-      <button
-        class="uk-button uk-button-primary uk-button-large uk-width-1-1"
-        id="start"
-        onclick="GameStart()"
-      >
-        START
-      </button>
-      <button
-        class="uk-button uk-button-secondary uk-button-large uk-width-1-1"
-        uk-toggle="target: #Setting"
-      >
-        設定
-      </button>
-    </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>イントロクイズ</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    eruda.init()
+  </script>
+</head>
 
-    <div id="Setting" uk-modal>
-      <div class="uk-modal-dialog uk-modal-body">
-        <h2 class="uk-modal-title">設定</h2>
-        <div class="uk-margin">
-          <textarea
-            class="uk-textarea"
-            id="YtUrls"
-            rows="5"
-            placeholder="Youtubeのリンクを貼ってください。複数ある場合は改行してください。現在、短縮URLのみ https://youtu.be/○○○○○"
-          ></textarea>
-        </div>
-        <!--
-        <label
-          ><input
-            class="uk-checkbox"
-            id="isRandom"
-            type="checkbox"
-          />ランダムに再生するか</label>-->
-        <button
-          class="uk-button uk-button-default uk-modal-close"
-          type="button"
-        >
-          閉じる
-        </button>
-        <button
-          class="uk-button uk-button-primary"
-          type="button"
-          onclick="SaveSetting()"
-        >
-          保存する
-        </button>
+<body>
+  <h2 class="title" style="text-align:center">
+    <span style="color: cornflowerblue">イントロ</span>クイズ
+  </h2>
+
+  <div>
+    <button class="uk-button uk-button-primary uk-button-large uk-width-1-1" id="start" onclick="GameStart()">
+      START
+    </button>
+    <button class="uk-button uk-button-secondary uk-button-large uk-width-1-1" uk-toggle="target: #Setting">
+      設定
+    </button>
+  </div>
+
+  <div id="Setting" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+      <h2 class="uk-modal-title">設定</h2>
+      <div class="uk-margin">
+        <textarea class="uk-textarea" id="YtUrls" rows="5"
+          placeholder="Youtubeのリンクを貼ってください。複数ある場合は改行してください。現在、短縮URLのみ https://youtu.be/○○○○○"></textarea>
       </div>
+      <label>
+        <input class="uk-checkbox" id="isRandom" type="checkbox" />ランダムに再生するか</label>
+      <div class="uk-margin">
+        <label>
+          <input class="uk-range" id="volume" type="range" value="60" min="0" max="100" step="1" />
+          <p id="show_volume">60</p>
+        </label>
+      </div>
+
+      <button class="uk-button uk-button-default uk-modal-close" type="button">
+        閉じる
+      </button>
+      <button class="uk-button uk-button-primary" type="button" onclick="SaveSetting()">
+        保存する
+      </button>
     </div>
+  </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://www.youtube.com/iframe_api" async></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://www.youtube.com/iframe_api" async></script>
 
-    <script>
-      function SaveSetting() {
-        const YtUrls = $('#YtUrls').val()
-        window.YtUrls = YtUrls
+  <script>
+    $('#volume').change(function (e) {
+      e.preventDefault();
+      $('#show_volume').text($('#volume').val());
+    });
+
+    function SaveSetting() {
+      const YtUrls = $('#YtUrls').val()
+      const isRandom = $('#isRandom').prop('checked')
+      const volume = $('#volume').val()
+
+
+      window.YtUrls = YtUrls
+      window.isRandom = isRandom
+      window.volume = volume
+    }
+    function LoadSetting() {
+      let YtUrls = window.YtUrls.split('\n')
+      if(window.isRandom) {
+        shuffle(YtUrls)
       }
-      function LoadSetting() {
-        return { YtUrls: window.YtUrls }
+      return {
+        YtUrls: YtUrls,
+        isRandom: window.isRandom,
+        volume: window.volume
       }
-      function ShowQuiz(q_number) {
-        const setting = LoadSetting()
-        console.log(setting.YtUrls.split('\n').length, q_number)
-        if (setting.YtUrls.split('\n').length < q_number) {
-          GameEnd()
-          return
-        }
-        const YtUrl = setting.YtUrls.split('\n')[q_number - 1]
-        const YtId = YtUrl.split('/')[3]
-        window.q_number = q_number
-        document.title = `${q_number}問目 | イントロクイズ`
-        $('#player').remove()
-        $('body').prepend('<div id="player"></div>')
-        player = new YT.Player('player', {
-          videoId: YtId,
-          events: {
-            onReady: function (event) {
-              player.setVolume(60)
-              player.playVideo()
-            },
+    }
+    function ShowQuiz(q_number) {
+      const setting = LoadSetting()
+      if (setting.YtUrls.length < q_number) {
+        GameEnd()
+        return
+      }
+      const YtUrl = setting.YtUrls[q_number - 1]
+      const YtId = YtUrl.split('/')[3]
+      window.q_number = q_number
+      document.title = `${q_number}問目 | イントロクイズ`
+      $('#player').remove()
+      $('body').prepend('<div id="player"></div>')
+      player = new YT.Player('player', {
+        videoId: YtId,
+        events: {
+          onReady: function (event) {
+            player.setVolume(setting.volume)
+            player.playVideo()
           },
-          playerVars: {
-            autoplay: 1,
-            loop: 1,
-            playlist: YtId,
-          },
-        })
-        $('#player, #next').hide()
-        $('#ShowAnswer').show()
+        },
+        playerVars: {
+          autoplay: 1,
+          loop: 1,
+          playlist: YtId,
+        },
+      })
+      $('#player, #next').hide()
+      $('#ShowAnswer').show()
 
-        $('#start').click(function (e) {
-          e.preventDefault()
-          player.playVideo()
-        })
-        $('#stop').click(function (e) {
-          e.preventDefault()
-          player.stopVideo()
-        })
-      }
-      function ShowAnswer(q_number) {
-        $('#ShowAnswer').hide()
-        $('#player, #next').show()
-      }
-      function GameStart() {
-        $('body').html(`
+      $('#start').click(function (e) {
+        e.preventDefault()
+        player.playVideo()
+      })
+      $('#stop').click(function (e) {
+        e.preventDefault()
+        player.stopVideo()
+      })
+    }
+    function ShowAnswer(q_number) {
+      $('#ShowAnswer').hide()
+      $('#player, #next').show()
+    }
+    function GameStart() {
+      $('body').html(`
         <div id="player"></div>
 
         <div id="operation">
@@ -137,11 +138,30 @@
         <button class="uk-button uk-button-danger" id="ShowAnswer" onclick="ShowAnswer(window.q_number)">答え</button>
         <button class="uk-button uk-button-primary" id="next" onclick="ShowQuiz(window.q_number + 1)">NEXT</button>
         `)
-        ShowQuiz(1)
+      ShowQuiz(1)
+    }
+    function GameEnd() {
+      $('body').html('終了')
+    }
+
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (currentIndex != 0) {
+
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+
+          // And swap it with the current element.
+          [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+        }
+
+        return array;
       }
-      function GameEnd() {
-        $('body').html("終了")
-      }
-    </script>
-  </body>
+  </script>
+</body>
+
 </html>
