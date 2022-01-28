@@ -78,7 +78,12 @@ function GameStart() {
   ShowQuiz(1)
 }
 function GameEnd() {
-  $('body').html('終了')
+  $('body').html(`
+  <h2>終了！！</h2>
+  <button class="uk-button uk-button-primary uk-button-large uk-width-1-1" id="start" onclick="window.location.reload()">
+  はじめに戻る
+  </button>
+  `)
 }
 
 function shuffle(array) {
