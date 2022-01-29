@@ -13,8 +13,6 @@ function SaveSetting() {
   const isRandom = $('#isRandom').prop('checked')
   const volume = $('#volume').val()
 
-  console.log(YtUrls);
-
   window.YtUrls = YtUrls
   window.isRandom = isRandom
   window.volume = volume
@@ -82,7 +80,6 @@ function GameStart() {
   if (window.isRandom) {
     shuffle(YtUrls)
   }
-  console.log(YtUrls);
   $('body').html(`
         <div id="player"></div>
         <div id="operation">
