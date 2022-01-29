@@ -63,6 +63,7 @@ function ShowQuiz(q_number) {
   })
 }
 function ShowAnswer(q_number) {
+  document.title = `答え ${q_number}問目 | イントロクイズ`
   $('#ShowAnswer').hide()
   $('#player, #next').show()
 }
@@ -92,6 +93,7 @@ function GameStart() {
   ShowQuiz(1)
 }
 function GameEnd() {
+  document.title = `終了! | イントロクイズ`
   $('body').html(`
   <h2>終了！！</h2>
   <button class="uk-button uk-button-primary uk-button-large uk-width-1-1" id="start" onclick="window.location.reload()">
