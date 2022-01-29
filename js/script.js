@@ -59,7 +59,7 @@ function ShowQuiz(q_number) {
   })
   $('#stop').click(function (e) {
     e.preventDefault()
-    player.stopVideo()
+    player.pauseVideo()
   })
 }
 function ShowAnswer(q_number) {
