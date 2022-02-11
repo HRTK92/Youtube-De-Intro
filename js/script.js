@@ -84,7 +84,7 @@ function GameStart() {
   $('body').html(`
         <div id="player"></div>
         <div id="operation">
-        <button class="uk-button uk-button-secondary" id="play"><span uk-icon="icon: play"></span>再生</button>
+        <!--<button class="uk-button uk-button-secondary" id="play"><span uk-icon="icon: play"></span>再生</button>-->
         <button class="uk-button uk-button-secondary" id="stop">停止</button>
         </div>
         <button class="uk-button uk-button-danger" id="ShowAnswer" onclick="ShowAnswer(window.q_number)">答え</button>
