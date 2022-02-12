@@ -2,14 +2,33 @@ $('#volume').change(function (e) {
   e.preventDefault()
   $('#show_volume').text($('#volume').val())
 })
+$("#addUrl").click(function (e) {
+  e.preventDefault();
+  $("#urlList").append(`
+  <div class="uk-inline">
+    <a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: close" id="removeUrl"></a>
+    <input class="uk-input" type="text" value="${$("#setUrl").val()}" id="url" disabled>
+  </div>
+  `);
+  $("#setUrl").val("");
+});
+$("#removeUrl").click(function (e) {
+  e.preventDefault();
+  $(this).parent.remove();
+});
 
 function SaveSetting() {
-  let YtUrls
-  if ($('#YtUrls').val().trim().length > 0) {
-    YtUrls = $('#YtUrls').val()
-  } else {
-    YtUrls = ''
-  }
+  let YtUrls = []
+  $.each($("#url"), function (indexInArray, valueOfElement) {
+    const val = $(valueOfElement).val()
+    console.log(val);
+    YtUrls.push(val)
+  });
+  $('#url').each(function (i, elem) {
+    console.log(i);
+    console.log(elem);
+  });
+  console.log(YtUrls);
   const isRandom = $('#isRandom').prop('checked')
   const volume = $('#volume').val()
 
@@ -26,11 +45,11 @@ function LoadSetting() {
 }
 function ShowQuiz(q_number) {
   const setting = LoadSetting()
-  if (setting.YtUrls.split('\n').length < q_number) {
+  if (setting.YtUrls.length < q_number) {
     GameEnd()
     return
   }
-  const YtUrl = setting.YtUrls.split('\n')[q_number - 1]
+  const YtUrl = setting.YtUrls[q_number - 1]
   const YtId = YtUrl.split('/')[3]
   window.q_number = q_number
   document.title = `${q_number}問目 | イントロクイズ`
@@ -69,7 +88,7 @@ function ShowAnswer(q_number) {
 }
 function GameStart() {
   const setting = LoadSetting()
-  if (setting.YtUrls == '') {
+  if (setting.YtUrls.length === 0) {
     UIkit.notification({
       message:
         '再生する動画が指定されていません。設定からURLを貼り付けて保存をしてください。',
@@ -77,7 +96,7 @@ function GameStart() {
     })
     return
   }
-  let YtUrls = setting.YtUrls.split('\n')
+  let YtUrls = setting.YtUrls
   if (window.isRandom) {
     shuffle(YtUrls)
   }
