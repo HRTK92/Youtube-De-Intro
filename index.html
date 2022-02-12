@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
-  <!--<script src="//cdn.jsdelivr.net/npm/eruda"></script>
-  <script>eruda.init();</script>-->
+  <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+  <script>eruda.init();</script>
 </head>
 
 <body>
@@ -35,8 +35,11 @@
     <div class="uk-modal-dialog uk-modal-body">
       <h2 class="uk-modal-title">設定</h2>
       <div class="uk-margin">
-        <textarea class="uk-textarea" id="YtUrls" rows="5"
-          placeholder="Youtubeのリンクを貼ってください。複数ある場合は改行してください。現在、短縮URLのみ https://youtu.be/○○○○○"></textarea>
+        <div id="urlList"></div>
+        <div class="uk-inline">
+          <a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: check" id="addUrl"></a>
+          <input class="uk-input" type="text" id="setUrl">
+        </div>
       </div>
       <label>
         <input class="uk-checkbox" id="isRandom" type="checkbox" />ランダムに再生するか</label>
