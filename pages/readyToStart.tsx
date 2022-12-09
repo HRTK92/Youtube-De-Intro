@@ -20,8 +20,7 @@ export default function Ready() {
           <div className='border shadow-md w-full h-full rounded-xl bg-white'>
             <div className='p-2'>
               <div className='flex flex-col'>
-                <div className='p-3'>
-                  <label htmlFor='inputURL'>Youtube</label>
+                <div className='p-3'>                  <label htmlFor='inputURL'>Youtube</label>
                   <div className='flex flex-col'>
                     {urls.map((url, index) => {
                       return (
