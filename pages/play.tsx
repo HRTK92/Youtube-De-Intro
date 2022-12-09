@@ -8,15 +8,14 @@ export default function Play() {
   const [isPlaying, setIsPlaying] = useState<boolean>(true)
   const [hide, setHide] = useState<boolean>(true)
   const [index, setIndex] = useState<number>(0)
-  const { urls, isRandom } = router.query as { urls: string; isRandom: 'true' | 'false' }
+  const { urls, isRandom } = router.query as { urls?: string; isRandom?: 'true' | 'false' }
+  if (!urls || !isRandom) return <></>
   let playlist: string[] = []
+  playlist = urls.split(',')
 
   if (isRandom === 'true') {
-    playlist = urls.split(',').sort(() => Math.random() - 0.5)
-  } else {
-    playlist = urls.split(',')
+    playlist.sort(() => Math.random() - 0.5)
   }
-
   return (
     <>
       <Head>
@@ -51,7 +50,6 @@ export default function Play() {
               onClick={() => {
                 if (index === 0) {
                   router.push('/readyToStart')
-
                   return
                 }
                 setIndex(index - 1)
