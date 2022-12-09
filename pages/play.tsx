@@ -30,7 +30,9 @@ export default function Play() {
         <ReactPlayer
           url={`https://www.youtube.com/watch?v=${playlist[index]}`}
           playing={isPlaying}
-          className={hide && 'blur'}
+          width='100%'
+          height='30%'
+          hidden={hide}
         ></ReactPlayer>
         <div className='px-4 py-2 flex flex-row justify-between'>
           <div>
