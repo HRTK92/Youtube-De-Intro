@@ -2,6 +2,10 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
+const vilidateUrl = (url: string) => {
+  return url.match(/https:\/\/youtu.be\/[a-zA-Z0-9_-]{11}/) !== null || url.match(/https:\/\/www.youtube.com\/watch\?v=[a-zA-Z0-9_-]{11}/) !== null
+}
+
 export default function Ready() {
   const router = useRouter()
 
@@ -16,11 +20,12 @@ export default function Ready() {
       </Head>
       <div className='w-screen h-screen bg-gradient-to-tr from-white to-indigo-200 flex flex-col'>
         <div className='p-3 text-2xl font-bold'>曲を選択</div>
-        <div className='p-4 '>
-          <div className='border shadow-md w-full h-full rounded-xl bg-white'>
+        <div className='p-4 justify-center flex'>
+          <div className='border shadow-md rounded-xl bg-white w-4/5'>
             <div className='p-2'>
               <div className='flex flex-col'>
-                <div className='p-3'>                  <label htmlFor='inputURL'>Youtube</label>
+                <div className='p-3'>
+                  <label htmlFor='inputURL' className='text-xl'>YouTube</label>
                   <div className='flex flex-col'>
                     {urls.map((url, index) => {
                       return (
@@ -33,22 +38,30 @@ export default function Ready() {
                       )
                     })}
                   </div>
-                  <div className='flex justify-between w-full'>
+                  <div className='flex flex-col w-full'>
                     <input
-                      className='border shadow-md rounded-md'
+                      className='border shadow-md rounded-md h-8'
                       type='text'
                       id='inputURL'
                       value={inputUrl}
                       onChange={(e) => setInputUrl(e.target.value)}
+                      onKeyUp={(e) => {
+                        if (e.key === 'Enter') {
+                          if (!vilidateUrl(inputUrl)) {
+                            return
+                          }
+                          setUrls([...urls, inputUrl])
+                          setInputUrl('')
+                        }
+                      }}
                     />
                     <button
-                      className='bg-gray-400 text-white px-2 py-1 rounded-md border'
+                      className='bg-gray-400 text-white px-2 py-1 rounded-md border w-24 my-1 ml-auto'
                       onClick={() => {
                         setUrls([...urls, inputUrl])
                         setInputUrl('')
                       }}
-                      disabled={inputUrl.match(/https:\/\/youtu.be\/[a-zA-Z0-9_-]{11}/) === null}
-                      placeholder='https://youtu.be/xxxxxxxxxxx'
+                      disabled={!vilidateUrl(inputUrl)}
                     >
                       追加
                     </button>
@@ -78,6 +91,9 @@ export default function Ready() {
             <button
               className='px-6 py-2 bg-gradient-to-bl from-blue-500 to-purple-500 text-white rounded-md shadow'
               onClick={() => {
+                if (urls.length === 0) {
+                  return
+                }
                 router.push({
                   pathname: '/play',
                   query: {
